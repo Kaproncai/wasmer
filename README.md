@@ -34,7 +34,7 @@ GitHub: Kaproncai
 ### Files
 
 - wmake.bat - batch file for linking under windows
-- sample1.wat - first wasm example
+- sample?.wat - wasm examples
 - head.htm - begining part of the output file with some js code
 - tail.htm - ending part of the output file with some js code
 - bin/wat2wasm.exe - wabt tool for windows

@@ -11,16 +11,16 @@
     i32.add
     global.set $t
 
-    global.get $s                    ;; s = s + c/64
+    global.get $s                    ;; s = s + c/128
     global.get $c
-    i32.const 6
+    i32.const 7
     i32.shr_s
     i32.add
     global.set $s
 
-    global.get $c                    ;; c = c - s/64
+    global.get $c                    ;; c = c - s/128
     global.get $s
-    i32.const 6
+    i32.const 7
     i32.shr_s
     i32.sub
     global.set $c

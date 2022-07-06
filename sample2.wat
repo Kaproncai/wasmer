@@ -3,7 +3,7 @@
 
   (global $t (mut i32)(i32.const 99));; t like time - counter in 16 milliseconds
   (global $s (mut i32)(i32.const 0)) ;; s like sinus
-  (global $c (mut i32)(i32.const 64));; c like cosinus
+  (global $c (mut i32)(i32.const 512));; c like cosinus
 
   (func $n                           ;; next step
     global.get $t                    ;; t = t + 1
@@ -11,16 +11,16 @@
     i32.add
     global.set $t
 
-    global.get $s                    ;; s = s + c/8
+    global.get $s                    ;; s = s + c/64
     global.get $c
-    i32.const 3
+    i32.const 6
     i32.shr_s
     i32.add
     global.set $s
 
-    global.get $c                    ;; c = c - s/8
+    global.get $c                    ;; c = c - s/64
     global.get $s
-    i32.const 3
+    i32.const 6
     i32.shr_s
     i32.sub
     global.set $c
@@ -32,6 +32,8 @@
     (local $a i32)                   ;; a like accumulator - a temporary variable
     (local $i i32)                   ;; i like index - the pixel index or rather memory offset
     (local $j i32)                   ;; j - the 2nd loop counter for color channels
+    (local $x i32)                   ;; x coordinate
+    (local $y i32)                   ;; y coordinate
 
     (loop $pixels                    ;; default resolution of canvas: 300 x 150 pixels
       global.get $t                  ;; backup t,s,c counters
@@ -71,8 +73,9 @@
         i32.mul
         i32.const -32768             ;; 128*128*4
         i32.sub
-;;      global.get $s
-;;      i32.mul
+        local.tee $x
+        global.get $c
+        i32.mul
 
         local.get $i                 ;; get the memory offset for putpixel
         i32.const 1200               ;; divided by 4*linelength
@@ -83,11 +86,21 @@
         i32.mul
         i32.const -32768             ;; 128*128*4
         i32.sub
-;;      global.get $c
-;;      i32.mul
+        local.tee $y
+        global.get $s
+        i32.mul
+        i32.sub                      ;; rotated x
+
+        local.get $x
+        global.get $s
+        i32.mul
+        local.get $y
+        global.get $c
+        i32.mul
+        i32.add                      ;; rotated y
 
         i32.xor
-        i32.const 14                 ;; t*t*128*128 >> 14+9
+        i32.const 23                 ;; t*t*128*128 >> 14+9
         i32.shr_s                    ;; t*t on [-1..+1] * 150
         i32.const 4
         i32.and

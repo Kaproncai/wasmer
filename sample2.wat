@@ -1,7 +1,7 @@
 (module                              ;; wasm source file by TomCat/Abaddon
   (memory (export "m") 4)            ;; 4 x 65536 bytes memory reserved
 
-  (global $t (mut i32)(i32.const 0)) ;; t like time - counter in 16 milliseconds
+  (global $t (mut i32)(i32.const 99));; t like time - counter in 16 milliseconds
   (global $s (mut i32)(i32.const 0)) ;; s like sinus
   (global $c (mut i32)(i32.const 64));; c like cosinus
 
@@ -40,7 +40,7 @@
 
       local.get $i                   ;; get the memory offset for putpixel
 
-      i32.const 0
+      i32.const 3
       local.set $j
       i32.const 255                  ;; abgr pixel value (out)
       (loop $channels (param i32)(result i32)   ;; blue, green, red color channels
@@ -58,7 +58,7 @@
         i32.const 16383
         global.get $t                ;; get t
         local.get $j
-        i32.add
+        i32.sub
         i32.const 255                ;; period is about 2 secs
         i32.and
         i32.const -128               ;; -128 ... +127 msecs
@@ -99,10 +99,8 @@
 
         local.get $j
         i32.const 1                  ;; offset step to the next pixel
-        i32.add
+        i32.sub
         local.tee $j
-        i32.const 3
-        i32.lt_s
       br_if $channels)
 
       i32.store                      ;; putpixel

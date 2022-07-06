@@ -2,7 +2,7 @@
   (memory (export "m") 4)            ;; 4 x 65536 bytes memory reserved
   (global $t (mut i32) (i32.const 0));; t like time - counter in milliseconds
   (func
-    (export "u")                     ;; u -> update function called by js function setTimeout
+    (export "u")                     ;; u -> update function called by javascript code
     (local $a i32)                   ;; a like accumulator - a temporary variable
     (local $i i32)                   ;; i like index - the pixel index or rather memory offset
     (loop $pixels                    ;; the default resolution of canvas: 300 x 150 pixels
@@ -52,8 +52,7 @@
 
       i32.const 0x01010101           ;; distribute the same value for bgr and alpha channels
       i32.mul
-      i64.extend_i32_s
-      i64.store32                    ;; putpixel
+      i32.store                      ;; putpixel
 
       local.get $i
       i32.const 4                    ;; offset step to the next pixel

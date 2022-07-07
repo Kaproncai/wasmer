@@ -29,7 +29,11 @@ GitHub: Kaproncai
 
 ### Used references
 
-[p01 Henri's blog](http://www.p01.org/) and the [AssemblyScript examples](https://www.assemblyscript.org/examples.html) helped a lot.
+- MicroW8 WASM Sizecoding Seminar by Exoticorn / Icebird [https://youtu.be/u-OvsbDqLAY](https://youtu.be/u-OvsbDqLAY)
+- p01 Henri's blog [http://www.p01.org/](http://www.p01.org/)
+- AssemblyScript examples [https://www.assemblyscript.org/examples.html](https://www.assemblyscript.org/examples.html)
+- Ben Smith's Raw WebAssembly Demos [https://github.com/binji/raw-wasm](https://github.com/binji/raw-wasm)
+
 
 ### Files
 

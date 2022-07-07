@@ -1,6 +1,6 @@
 (module                              ;; wasm source file by TomCat/Abaddon
   (memory (export "m") 4)            ;; 4 x 65536 bytes memory reserved
-  (global $t (mut i32) (i32.const 0));; t like time - counter in milliseconds
+  (global $t (mut i32) (i32.const 0));; t like time - counter in 16 milliseconds
   (func
     (export "u")                     ;; u -> update function called by javascript code
     (local $a i32)                   ;; a like accumulator - a temporary variable
@@ -8,7 +8,7 @@
     (loop $pixels                    ;; the default resolution of canvas: 300 x 150 pixels
       local.get $i                   ;; get the memory offset for putpixel
 
-      local.get $i                   ;; get the memory offset for putpixel
+      local.get $i                   ;; get the memory offset for x coord
       i32.const 2                    ;; divided by 4
       i32.shr_u                      ;; we get the real pixel index
       i32.const 300                  ;; the reminder of linelength
@@ -20,7 +20,7 @@
       local.get $a
       i32.mul
 
-      local.get $i                   ;; get the memory offset for putpixel
+      local.get $i                   ;; get the memory offset for y coord
       i32.const 1200                 ;; divided by 4*linelength
       i32.div_s                      ;; gives the y coordinate
 

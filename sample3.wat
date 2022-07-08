@@ -7,8 +7,8 @@
 (func (export "u")                 ;; u -> update function called by javascript code
 
   (local $i i32)                   ;; i like index - the pixel index or rather memory offset
-  (local $x i32)                   ;; x coordinate
-  (local $y i32)                   ;; y coordinate
+  (local $x f32)                   ;; x coordinate
+  (local $y f32)                   ;; y coordinate
   (local $a f32)                   ;; a for alpha
 
   (loop $pixels                    ;; default resolution of canvas: 300 x 150 pixels
@@ -24,50 +24,38 @@
     i32.rem_s
     i32.const 150
     i32.sub
+    f32.convert_i32_s
     local.tee $x
     local.get $x
-    i32.mul
+    f32.mul
     local.get $i                   ;; get the memory offset for putpixel
     i32.const 1200                 ;; divided by 4*linelength
     i32.div_s                      ;; gives the y coordinate
     i32.const 75
     i32.sub
+    f32.convert_i32_s
     local.tee $y
     local.get $y
-    i32.mul
-    i32.add
-    f32.convert_i32_s
+    f32.mul
+    f32.add
     f32.sqrt
     local.tee $a
     f32.div
-    global.get $t
-    f32.convert_i32_s
-    i32.const 1000
-    f32.convert_i32_s
-    f32.div  
-    i32.const 126
-    f32.convert_i32_s
-    f32.mul
-    f32.add
     i32.trunc_sat_f32_s
+    global.get $t
+    i32.const 1
+    i32.shl
+    i32.add
 
     local.get $x
-    f32.convert_i32_s
     local.get $y
-    f32.convert_i32_s
     call $atan2
-    f32.const 163.0054168701172
-    f32.mul
-    global.get $t
-    f32.convert_i32_s
-    i32.const 1000
-    f32.convert_i32_s
-    f32.div  
-    i32.const 63
+    i32.const 163
     f32.convert_i32_s
     f32.mul
-    f32.add
     i32.trunc_f32_s    
+    global.get $t
+    i32.add
 
     i32.xor
     i32.const 240
@@ -92,7 +80,7 @@
   br_if $pixels)
 
   global.get $t                    ;; t = t + 1
-  i32.const 16
+  i32.const 1
   i32.add
   global.set $t
 )

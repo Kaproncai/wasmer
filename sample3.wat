@@ -70,19 +70,16 @@
     i32.trunc_f32_s    
 
     i32.xor
-    i32.const 4
-    i32.shr_s
-    i32.const 15
+    i32.const 240
     i32.and
-
-    i32.const 0x000F0D07           ;; distribute the same value for bgr and alpha channels
-    i32.mul
     local.get $a
-    f32.const 1.5
-    f32.mul
     i32.trunc_f32_s    
-    i32.const 24
-    i32.shl
+    i32.mul
+    i32.const 9
+    i32.shr_s
+    i32.const 0x03000000
+    i32.mul
+    i32.const 0x00F6D57E           ;; color
     i32.add
     i32.store                      ;; putpixel
 

@@ -112,12 +112,25 @@
       i32.const 0
       f32.convert_i32_s
       f32.max
+      local.tee $z
       local.get $radius
       f32.div                      ;; diffuse
       f32.const 0.6                ;; ambient
       f32.add
-
       local.set $a
+
+      local.get $z
+      local.get $d
+      f32.add
+      local.get $radius
+      f32.const 2.44
+      f32.mul
+      f32.gt
+      if
+        i32.const 4
+        f32.convert_i32_u
+        local.set $a
+      end
     end
   end
   local.get $a
@@ -229,7 +242,14 @@
     i32.const 29
     call $accum
 
-    i32.const 255
+    global.get $y
+    i32.trunc_f32_s    
+    i32.const 1
+    i32.and
+    (if (result i32)
+      (then i32.const 255)
+      (else i32.const 240)
+    )
     global.get $b
     call $col
     global.get $g

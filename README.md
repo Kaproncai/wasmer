@@ -16,6 +16,9 @@ Write your single-file-intro in pure WebAssembly.
 Give the name of your wat file to the maker (without extension) and
 it will link together the head&tail of html with the base64 coded wasm binary.
 
+If you give a 2nd parameter as an option (like "min"), then it will
+use the minimal versions of head&tail instead of the standard ones.
+
 For more information on wasm coding check the sample1.wat file.
 
 ### Author
@@ -38,9 +41,11 @@ GitHub: Kaproncai
 ### Files
 
 - wmake.bat - batch file for linking under windows
-- sample?.wat - wasm examples
+- sample?.wat - wasm examples 1-4
 - head.htm - begining part of the output file with some js code
 - tail.htm - ending part of the output file with some js code
+- head_min.htm - minimal version
+- tail_min.htm - minimal version
 - bin/wat2wasm.exe - wabt tool for windows
 - LICENSE - copyright information
 - README.md - this file

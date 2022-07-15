@@ -268,11 +268,11 @@
     i32.lt_s
   br_if $pixels)
 
-  i32.const 12160
+  i32.const 24160
   local.set $i
   (loop $mirrorh
     local.get $i
-    i32.const -11360
+    i32.const -23360
     i32.add
     local.set $k
 
@@ -286,6 +286,17 @@
     i32.const 50
     local.set $j
     (loop $mirrorw
+      local.get $j
+      i32.const 7
+      i32.and
+      if
+      else
+        local.get $i
+        i32.const 1200
+        i32.add
+        local.set $i
+      end
+
       local.get $i
       local.get $k
       i32.load
@@ -313,10 +324,10 @@
     i32.store
 
     local.get $i
-    i32.const 1000                 ;; step to the next pixel
+    i32.const -6200                 ;; step to the next pixel
     i32.add
     local.tee $i
-    i32.const 180000               ;; eos = 300 x 150 x 4
+    i32.const 187200               ;; eos = 300 x 150 x 4
     i32.lt_s
   br_if $mirrorh)
 

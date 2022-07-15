@@ -251,18 +251,11 @@
 
     local.get $i
     i64.const 0
-    i64.store offset=1193;;2
+    i64.store offset=1197;;2
 
     i32.const 51
     local.set $j
     (loop $mirrorw
-
-      local.get $i
-      local.get $k
-      i32.load
-      i32.const 0x3f
-      i32.or
-      i32.store
 
       local.get $j
       i32.const 7
@@ -273,12 +266,17 @@
       )
       local.get $i
       i32.add
-      local.set $i
+      local.tee $i
 
       local.get $k
       i32.const 8
       i32.sub
-      local.set $k
+      local.tee $k
+
+      i32.load
+      i32.const 0x3f
+      i32.or
+      i32.store
 
       local.get $j
       i32.const 1
@@ -288,7 +286,7 @@
     
     local.get $i
     i32.const 0
-    i32.store8
+    i32.store8 offset=4
 
     local.get $i
     i32.const -6204                 ;; step to the next pixel

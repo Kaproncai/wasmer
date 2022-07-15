@@ -8,3 +8,4 @@ IF [%2] == [] (
  copy /b head_min.htm + %1.b64 + tail_min.htm %1.htm
 )
  
+dir %1.htm

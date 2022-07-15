@@ -4,7 +4,7 @@
 (global $c (mut f32)(f32.const 2.5));;c like cosinus
 (global $x (mut i32)(i32.const 0)) ;; x coordinate
 (global $y (mut i32)(i32.const 0)) ;; y coordinate
-(global $z (mut f32)(f32.const 0)) ;; z buffer
+(global $z (mut i32)(i32.const 0)) ;; z buffer
 (global $p (mut i32)(i32.const 0)) ;; p the pixel value (bgr)
 
 (func $accum
@@ -93,9 +93,11 @@
     f32.sub
     local.tee $z
     global.get $z
+    f32.convert_i32_s
     f32.lt
     if
       local.get $z
+      i32.trunc_f32_s  
       global.set $z
 
       local.get $d
@@ -120,13 +122,11 @@
       f32.const 2.44
       f32.mul
       f32.gt
-      if
-        i32.const 4
-        f32.convert_i32_u
-        local.set $a
-      end
-
-      local.get $a
+      (if (result f32)
+        (then i32.const 4
+        f32.convert_i32_u)
+        (else local.get $a)
+      )
       local.get $r
       local.get $g
       local.get $b
@@ -159,8 +159,7 @@
     i32.sub
     global.set $y
 
-    i32.const -1
-    f32.convert_i32_u
+    i32.const 63
     global.set $z
 
     global.get $y

@@ -138,7 +138,9 @@
 
 (func (export "u")                 ;; u -> update function called by javascript code
   (local $i i32)                   ;; i the pixel index
-  (local $a f32)
+  (local $j i32)                   ;; j the 2nd loop counter
+  (local $k i32)                   ;; k the 3rd loop counter
+  (local $a f32)                   ;; a the accumulator - a temporary variable
 
   (loop $pixels                    ;; default resolution of canvas: 300 x 150 pixels
     local.get $i                   ;; get the pixel index
@@ -247,8 +249,8 @@
     i32.const 1
     i32.and
     (if (result i32)
-      (then i32.const 255)
-      (else i32.const 240)
+      (then i32.const 239)
+      (else i32.const 224)
     )
     global.get $b
     call $col
@@ -265,6 +267,58 @@
     i32.const 45000                ;; eos = 300 x 150
     i32.lt_s
   br_if $pixels)
+
+  i32.const 12160
+  local.set $i
+  (loop $mirrorh
+    local.get $i
+    i32.const -11360
+    i32.add
+    local.set $k
+
+    local.get $i
+    i32.const 0
+    i32.store offset=1196
+    local.get $i
+    i32.const 0
+    i32.store offset=1192
+
+    i32.const 50
+    local.set $j
+    (loop $mirrorw
+      local.get $i
+      local.get $k
+      i32.load
+      i32.const 0x1f000000
+      i32.or
+      i32.store
+
+      local.get $i
+      i32.const 4
+      i32.add
+      local.set $i
+      local.get $k
+      i32.const 8
+      i32.sub
+      local.set $k
+
+      local.get $j
+      i32.const 1
+      i32.sub
+      local.tee $j
+    br_if $mirrorw)
+    
+    local.get $i
+    i32.const 0
+    i32.store
+
+    local.get $i
+    i32.const 1000                 ;; step to the next pixel
+    i32.add
+    local.tee $i
+    i32.const 180000               ;; eos = 300 x 150 x 4
+    i32.lt_s
+  br_if $mirrorh)
 
   global.get $s                    ;; s = s + c/63
   global.get $c

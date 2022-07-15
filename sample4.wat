@@ -150,7 +150,7 @@
     local.get $i                   ;; get the pixel index
     i32.const 300                  ;; divided by line length
     i32.rem_s                      ;; reminder the x coordinate
-    i32.const 150                  ;; centered
+    i32.const 160                  ;; ~centered
     i32.sub
     f32.convert_i32_s
     global.set $x
@@ -187,7 +187,7 @@
     i32.const 81;;116;;58
     call $accum
 
-    i32.const 45
+    i32.const 42
     f32.convert_i32_s
     global.get $s
     i32.const 10
@@ -268,7 +268,7 @@
     i32.lt_s
   br_if $pixels)
 
-  i32.const 24160
+  i32.const 24200
   local.set $i
   (loop $mirrorh
     local.get $i

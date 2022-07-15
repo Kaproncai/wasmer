@@ -40,22 +40,6 @@
   end
 )
 
-(func $col
-  (param $p i32)
-  (param $c f32)
-  (result i32)
-
-  local.get $p
-  i32.const 8
-  i32.shl
-  local.get $c
-  i32.const 255
-  f32.convert_i32_s
-  f32.min
-  i32.trunc_f32_s    
-  i32.add
-)
-
 (func $sphere
   (param $x f32)
   (param $y f32)
@@ -249,15 +233,24 @@
     i32.const 1
     i32.and
     (if (result i32)
-      (then i32.const 239)
-      (else i32.const 224)
+      (then i32.const 61184)
+      (else i32.const 57344)
     )
+
     global.get $b
-    call $col
+    i32.trunc_f32_s    
+    i32.add
+    i32.const 8
+    i32.shl
     global.get $g
-    call $col
+    i32.trunc_f32_s    
+    i32.add
+    i32.const 8
+    i32.shl
     global.get $r
-    call $col
+    i32.trunc_f32_s    
+    i32.add
+
     i32.store                      ;; putpixel
 
     local.get $i

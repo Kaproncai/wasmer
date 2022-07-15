@@ -2,12 +2,10 @@
 
 (global $s (mut f32)(f32.const 0)) ;; s like sinus
 (global $c (mut f32)(f32.const 2.5));;c like cosinus
-(global $x (mut f32)(f32.const 0)) ;; x coordinate
-(global $y (mut f32)(f32.const 0)) ;; y coordinate
+(global $x (mut i32)(i32.const 0)) ;; x coordinate
+(global $y (mut i32)(i32.const 0)) ;; y coordinate
 (global $z (mut f32)(f32.const 0)) ;; z buffer
-(global $r (mut f32)(f32.const 0)) ;; r like red component
-(global $g (mut f32)(f32.const 0)) ;; g like green component
-(global $b (mut f32)(f32.const 0)) ;; b like blue component
+(global $p (mut i32)(i32.const 0)) ;; p the pixel value (bgr)
 
 (func $accum
   (param $lum f32)
@@ -15,29 +13,39 @@
   (param $g i32)
   (param $b i32)
 
-  local.get $lum
-  i32.const 0
+  global.get $y
+  i32.const 1
+  i32.and
+  i32.const 12
+  i32.shl
+  i32.const -4096;;57344
+  i32.xor
+
+  local.get $b
   f32.convert_i32_s
-  f32.gt
-  if
-    local.get $r
-    f32.convert_i32_s
-    local.get $lum
-    f32.mul
-    global.set $r
+  local.get $lum
+  f32.mul
+  i32.trunc_f32_s  
+  i32.add
+  i32.const 8
+  i32.shl
 
-    local.get $g
-    f32.convert_i32_s
-    local.get $lum
-    f32.mul
-    global.set $g
+  local.get $g
+  f32.convert_i32_s
+  local.get $lum
+  f32.mul
+  i32.trunc_f32_s  
+  i32.add
+  i32.const 8
+  i32.shl
 
-    local.get $b
-    f32.convert_i32_s
-    local.get $lum
-    f32.mul
-    global.set $b
-  end
+  local.get $r
+  f32.convert_i32_s
+  local.get $lum
+  f32.mul
+  i32.trunc_f32_s  
+  i32.add
+  global.set $p
 )
 
 (func $sphere
@@ -45,7 +53,9 @@
   (param $y f32)
   (param $z f32)
   (param $radius f32)
-  (result f32)
+  (param $r i32)
+  (param $g i32)
+  (param $b i32)
   (local $a f32)
   (local $d f32)
 
@@ -55,6 +65,7 @@
 
   local.get $x
   global.get $x
+  f32.convert_i32_s
   f32.sub                          ;; dx
   local.tee $x
   local.get $x
@@ -63,18 +74,17 @@
 
   local.get $y
   global.get $y
+  f32.convert_i32_s
   f32.sub
   local.tee $y                     ;; dy
   local.get $y
   f32.mul                          ;; dy2
   f32.sub                          ;; r2-dx2-dy2
+  local.tee $d
 
   i32.const 0
   f32.convert_i32_s
-  local.tee $a
-  f32.max
-  local.tee $d
-  i32.trunc_f32_s
+  f32.gt
   if
     local.get $z
     local.get $d
@@ -115,9 +125,14 @@
         f32.convert_i32_u
         local.set $a
       end
+
+      local.get $a
+      local.get $r
+      local.get $g
+      local.get $b
+      call $accum
     end
   end
-  local.get $a
 )
 
 (func (export "u")                 ;; u -> update function called by javascript code
@@ -136,14 +151,12 @@
     i32.rem_s                      ;; reminder the x coordinate
     i32.const 160                  ;; ~centered
     i32.sub
-    f32.convert_i32_s
     global.set $x
     local.get $i                   ;; get the pixel index
     i32.const 300                  ;; divided by line length
     i32.div_s                      ;; gives the y coordinate
     i32.const 55                   ;; ~centered
     i32.sub
-    f32.convert_i32_s
     global.set $y
 
     i32.const -1
@@ -151,14 +164,7 @@
     global.set $z
 
     global.get $y
-    i32.trunc_f32_s    
-    (if (result f32)
-      (then
-        global.get $y)
-      (else
-        i32.const 1
-        f32.convert_i32_s)
-    )
+    f32.convert_i32_s
     f32.neg
     i32.const 75
     f32.convert_i32_s
@@ -181,11 +187,10 @@
     f32.convert_i32_s
     i32.const 20
     f32.convert_i32_s
-    call $sphere
     i32.const 21
     i32.const 38
     i32.const 44
-    call $accum
+    call $sphere
 
     global.get $s
     i32.const 15
@@ -197,11 +202,10 @@
     f32.convert_i32_s
     i32.const 8
     f32.convert_i32_s
-    call $sphere
     i32.const 45
     i32.const 26
     i32.const 13
-    call $accum
+    call $sphere
 
     i32.const 0
     f32.convert_i32_s
@@ -222,35 +226,12 @@
     i32.const 30
     f32.convert_i32_s
     f32.mul
-    call $sphere
     i32.const 38
     i32.const 45
     i32.const 29
-    call $accum
+    call $sphere
 
-    global.get $y
-    i32.trunc_f32_s    
-    i32.const 1
-    i32.and
-    (if (result i32)
-      (then i32.const 61184)
-      (else i32.const 57344)
-    )
-
-    global.get $b
-    i32.trunc_f32_s    
-    i32.add
-    i32.const 8
-    i32.shl
-    global.get $g
-    i32.trunc_f32_s    
-    i32.add
-    i32.const 8
-    i32.shl
-    global.get $r
-    i32.trunc_f32_s    
-    i32.add
-
+    global.get $p
     i32.store                      ;; putpixel
 
     local.get $i
@@ -261,7 +242,7 @@
     i32.lt_s
   br_if $pixels)
 
-  i32.const 24200
+  i32.const 24199
   local.set $i
   (loop $mirrorh
     local.get $i
@@ -270,37 +251,31 @@
     local.set $k
 
     local.get $i
-    i32.const 0
-    i32.store offset=1196
-    local.get $i
-    i32.const 0
-    i32.store offset=1192
+    i64.const 0
+    i64.store offset=1193;;2
 
-    i32.const 50
+    i32.const 51
     local.set $j
     (loop $mirrorw
-      local.get $j
-      i32.const 7
-      i32.and
-      if
-      else
-        local.get $i
-        i32.const 1200
-        i32.add
-        local.set $i
-      end
 
       local.get $i
       local.get $k
       i32.load
-      i32.const 0x1f000000
+      i32.const 0x3f
       i32.or
       i32.store
 
+      local.get $j
+      i32.const 7
+      i32.and
+      (if (result i32)
+        (then i32.const 4)
+        (else i32.const 1204)
+      )
       local.get $i
-      i32.const 4
       i32.add
       local.set $i
+
       local.get $k
       i32.const 8
       i32.sub
@@ -314,13 +289,13 @@
     
     local.get $i
     i32.const 0
-    i32.store
+    i32.store8
 
     local.get $i
-    i32.const -6200                 ;; step to the next pixel
+    i32.const -6204                 ;; step to the next pixel
     i32.add
     local.tee $i
-    i32.const 187200               ;; eos = 300 x 150 x 4
+    i32.const 180000               ;; eos = 300 x 150 x 4
     i32.lt_s
   br_if $mirrorh)
 

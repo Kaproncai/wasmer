@@ -41,7 +41,10 @@ GitHub: Kaproncai
 ### Files
 
 - wmake.bat - batch file for linking under windows
-- sample?.wat - wasm examples 1-4
+- sample1.wat - wasm example #1 bouncing point
+- sample2.wat - wasm example #2 rotozoomer with color delay
+- sample3.wat - wasm example #3 tunnel
+- sample4.wat - wasm example #4 mirror 1k
 - head.htm - begining part of the output file with some js code
 - tail.htm - ending part of the output file with some js code
 - head_min.htm - minimal version

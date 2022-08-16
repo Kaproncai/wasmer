@@ -13,15 +13,15 @@
   (param $g i32)
   (param $b i32)
 
-  global.get $y
-  i32.const 1
+  global.get $y                    ;; crt scanline fx on the alpha channel
+  i32.const 1                      ;; the intensity depending on the lsb of y coord
   i32.and
   i32.const 12
   i32.shl
   i32.const -4096;;57344
   i32.xor
 
-  local.get $b
+  local.get $b                     ;; scaling the blue color component by the luminance
   f32.convert_i32_s
   local.get $lum
   f32.mul
@@ -30,7 +30,7 @@
   i32.const 8
   i32.shl
 
-  local.get $g
+  local.get $g                     ;; scaling the green color component by the luminance
   f32.convert_i32_s
   local.get $lum
   f32.mul
@@ -39,7 +39,7 @@
   i32.const 8
   i32.shl
 
-  local.get $r
+  local.get $r                     ;; scaling the red color component by the luminance
   f32.convert_i32_s
   local.get $lum
   f32.mul
@@ -63,7 +63,7 @@
   local.get $radius
   f32.mul                          ;; r2
 
-  local.get $x
+  local.get $x                     ;; sphere center x coord - screen x coord
   global.get $x
   f32.convert_i32_s
   f32.sub                          ;; dx
@@ -72,7 +72,7 @@
   f32.mul                          ;; dx2
   f32.sub                          ;; r2-dx2
 
-  local.get $y
+  local.get $y                     ;; sphere center y coord - screen y coord
   global.get $y
   f32.convert_i32_s
   f32.sub
@@ -83,9 +83,9 @@
   local.tee $d
 
   i32.const 0
-  f32.convert_i32_s
+  f32.convert_i32_s                
   f32.gt
-  if
+  if                               ;; ray hit? (or miss)
     local.get $z
     local.get $d
     f32.sqrt
@@ -95,10 +95,10 @@
     global.get $z
     f32.convert_i32_s
     f32.lt
-    if
+    if                             ;; z coord is closer than z buffer?
       local.get $z
       i32.trunc_f32_s  
-      global.set $z
+      global.set $z                ;; new minimum distance stored (z coord)
 
       local.get $d
       local.get $x
@@ -113,24 +113,24 @@
       f32.div                      ;; diffuse
       f32.const 0.6                ;; ambient
       f32.add
-      local.set $a
+      local.set $a                 ;; diffuse + ambient
 
       local.get $z
       local.get $d
-      f32.add
+      f32.add                      ;; half way vector
       local.get $radius
-      f32.const 2.44
+      f32.const 2.44               ;; specular highlight treshold
       f32.mul
       f32.gt
       (if (result f32)
-        (then i32.const 4
+        (then i32.const 4          ;; make a very bright spot
         f32.convert_i32_u)
         (else local.get $a)
       )
       local.get $r
       local.get $g
       local.get $b
-      call $accum
+      call $accum                  ;; colorize the light intensity
     end
   end
 )
@@ -159,10 +159,10 @@
     i32.sub
     global.set $y
 
-    i32.const 63
+    i32.const 63                   ;; z buffer get a big starter value
     global.set $z
 
-    global.get $y
+    global.get $y                  ;; a blueish gradient in the y direction
     f32.convert_i32_s
     f32.neg
     i32.const 75
@@ -176,9 +176,9 @@
     i32.const 81;;116;;58
     call $accum
 
-    i32.const 42
+    i32.const 42                   ;; the blueish sphere test
     f32.convert_i32_s
-    global.get $s
+    global.get $s                  ;; sinus-moving along the y axis
     i32.const 10
     f32.convert_i32_s
     f32.mul
@@ -191,10 +191,10 @@
     i32.const 44
     call $sphere
 
-    global.get $s
+    global.get $s                  ;; the redish sphere test
     i32.const 15
     f32.convert_i32_s
-    f32.mul
+    f32.mul                        ;; sinus-moving along the x axis
     i32.const 25
     f32.convert_i32_s
     i32.const -35
@@ -206,17 +206,17 @@
     i32.const 13
     call $sphere
 
-    i32.const 0
+    i32.const 0                    ;; the greenish sphere test
     f32.convert_i32_s
     i32.const 0
     f32.convert_i32_s
     global.get $c
     i32.const 18
     f32.convert_i32_s
-    f32.mul
+    f32.mul                        ;; cosinus-moving along the z axis
     local.tee $a
     i32.const 250
-    f32.convert_i32_s
+    f32.convert_i32_s              ;; radius is corrected according to the z coord
     local.get $a
     f32.sub
     i32.const 250
@@ -241,7 +241,7 @@
     i32.lt_s
   br_if $pixels)
 
-  i32.const 24199
+  i32.const 24199                  ;; copy and flip the part of the image
   local.set $i
   (loop $mirrorh
     local.get $i
@@ -249,7 +249,7 @@
     i32.add
     local.set $k
 
-    local.get $i
+    local.get $i                   ;; left side of the black frame
     i64.const 0
     i64.store offset=1197;;2
 
@@ -259,7 +259,7 @@
 
       local.get $j
       i32.const 7
-      i32.and
+      i32.and                      ;; every eighth pixel shifted upward
       (if (result i32)
         (then i32.const 4)
         (else i32.const 1204)
@@ -284,12 +284,12 @@
       local.tee $j
     br_if $mirrorw)
     
-    local.get $i
+    local.get $i                   ;; right side of the black frame
     i32.const 0
     i32.store8 offset=4
 
     local.get $i
-    i32.const -6204                 ;; step to the next pixel
+    i32.const -6204                ;; step to the next pixel
     i32.add
     local.tee $i
     i32.const 180000               ;; eos = 300 x 150 x 4
@@ -302,12 +302,12 @@
   f32.convert_i32_s
   f32.div
   f32.add
-  global.set $s
+  global.set $s                    ;; store new sinus value
   global.get $c                    ;; c = c - s/63
   global.get $s
   i32.const 63
   f32.convert_i32_s
   f32.div
   f32.sub
-  global.set $c
+  global.set $c                    ;; store new cosinus value
 )

@@ -1,4 +1,4 @@
-call wmakeb64 sample1
-call wmakeb64 sample2
-call wmakeb64 sample3 math
-call wmakedef sample4
+call wmakedef sample1
+call wmakebin sample2
+call wmakebin sample3 math
+call wmakebin sample4
